@@ -1,25 +1,35 @@
 import { ethers } from "ethers";
+
 import { abi } from "./abi";
 
-const defaultProvider = import.meta.env.VITE_DEFAULT_PROVIDER;
-const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+const contractAddress = "0x823f9743588f7cdaa0c698a8bd531d54fb7fc533";
+
+console.log(contractAddress);
+
 const contractABI = abi;
+
 let provider;
 let signer;
 let contract;
 let writableContract;
 
-export function initializeEthers() {
+export async function initializeEthers() {
+  // Made it asynchronous
+  console.log("Initializing Ethers");
+
   if (typeof window.ethereum !== "undefined") {
     provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
+    signer = await provider.getSigner(); // Awaited the async method
   } else {
-    provider = new ethers.providers.getDefaultProvider(defaultProvider);
+    var provider = ethers.getDefaultProvider("sepolia");
+  }
+
+  if (!provider || !contractAddress || !contractABI) {
+    throw new Error("Essential contract details missing"); // Error check
   }
 
   contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-  // If signer is available, we create a writable version of the contract
   if (signer) {
     writableContract = new ethers.Contract(
       contractAddress,
@@ -54,4 +64,18 @@ export async function callContractFunction(funcName, ...args) {
   }
   const result = await writableContract[funcName](...args);
   return result;
+}
+
+export function getContract() {
+  if (!contract) {
+    throw new Error("Contract is not initialized");
+  }
+  return contract;
+}
+
+export function getWritableContract() {
+  if (!writableContract) {
+    throw new Error("Contract is not initialized");
+  }
+  return writableContract;
 }
