@@ -17,7 +17,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { connectWallet } from "../ethersService";
+import { connectWallet, callContractFunction } from "../ethersService";
+import { uploadToIPFS } from "../ipfsService";
 
 const currentAccount = ref(null);
 
@@ -30,4 +31,13 @@ const handleConnectWallet = async () => {
     console.log("Error connecting wallet:", error);
   }
 };
+
+async function mintCertificate(file, to, universityName, certificateDate) {
+  // Step 1: Upload PDF to IPFS
+  const ipfsHash = await uploadToIPFS(file);
+  const uri = `ipfs://${ipfsHash}`;
+
+  // Step 2: Mint a new NFT with the IPFS hash
+  await callContractFunction("mint", to, uri, universityName, certificateDate);
+}
 </script>
