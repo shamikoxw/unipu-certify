@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
-
+import { store } from "./main";
 import { abi } from "./abi";
 
-const contractAddress = "0x823f9743588f7cdaa0c698a8bd531d54fb7fc533";
+const contractAddress = "0xbdb36402b0BFa7E5ccDa0E826E1De80bb8fcd1F7";
 
 console.log(contractAddress);
 
@@ -64,8 +64,57 @@ export async function callContractFunction(funcName, ...args) {
       "Function is not available on the contract or signer is not initialized"
     );
   }
-  const result = await writableContract[funcName](...args);
-  return result;
+  const transactionResponse = await writableContract[funcName](...args);
+  console.log(transactionResponse.hash);
+  await transactionResponse.wait(); // Wait for the transaction to be mined
+  return {
+    transactionResponse,
+    txHash: transactionResponse.hash,
+  };
+}
+
+export async function verifyCertificateOnChain(tokenId, uiDetails) {
+  const certificate = await contract.certificates(tokenId);
+  console.log(certificate);
+  if (
+    certificate.uri === uiDetails.uri &&
+    certificate.ipfsHash === uiDetails.ipfsHash &&
+    certificate.universityName === uiDetails.universityName &&
+    certificate.certificateType === uiDetails.certificateType &&
+    certificate.certificateDate === uiDetails.certificateDate
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export async function fetchMintedNFTsForUser(account) {
+  const contract = getContract();
+  const totalCertificates = await contract.totalCertificates();
+  const userNFTs = [];
+
+  for (let i = 0; i < totalCertificates; i++) {
+    const certificate = await contract.certificates(i);
+    const ownerAddress = await contract.certificateOwners(i);
+
+    if (ownerAddress.toLowerCase() === account.toLowerCase()) {
+      const txHash = store.setTxHash(certificate.ipfsHash);
+
+      userNFTs.push({
+        id: i,
+        uri: certificate.uri,
+        ipfsHash: certificate.ipfsHash,
+        universityName: certificate.universityName,
+        certificateType: certificate.certificateType,
+        certificateDate: certificate.certificateDate,
+        ownerAddress: ownerAddress,
+        transactionHash: txHash,
+      });
+    }
+  }
+
+  return userNFTs;
 }
 
 export function getContract() {

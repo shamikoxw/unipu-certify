@@ -25,6 +25,21 @@
       <ul
         class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:items-center lg:w-auto lg:space-x-6"
       >
+        <li @click="selectMenuItem('Sve')">
+          <a
+            :class="
+              selectedMenuItem === 'Sve'
+                ? 'text-yellow-600 font-bold'
+                : 'text-gray-400 hover:text-gray-500'
+            "
+            href="#"
+          >
+            Sve
+          </a>
+        </li>
+        <li class="text-gray-300">
+          <span class="material-icons">more_vert</span>
+        </li>
         <li @click="selectMenuItem('Završni radovi')">
           <a
             :class="
@@ -80,21 +95,6 @@
             href="#"
           >
             Diplome (diplomski)
-          </a>
-        </li>
-        <li class="text-gray-300">
-          <span class="material-icons">more_vert</span>
-        </li>
-        <li @click="selectMenuItem('Ostalo')">
-          <a
-            :class="
-              selectedMenuItem === 'Ostalo'
-                ? 'text-yellow-600 font-bold'
-                : 'text-gray-400 hover:text-gray-500'
-            "
-            href="#"
-          >
-            Ostalo
           </a>
         </li>
       </ul>
@@ -195,17 +195,15 @@
 <script setup>
 import { RouterView } from "vue-router";
 import { store } from "./main";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
-const selectedMenuItem = ref("Diplome (preddiplomski)"); // Initial selected menu item
+const selectedMenuItem = computed(() => store.selectedMenuItem);
 
 const selectMenuItem = (item) => {
-  selectedMenuItem.value = item;
+  store.setSelectedMenuItem(item);
 };
 
-// Burger menus
 document.addEventListener("DOMContentLoaded", function () {
-  // open
   const burger = document.querySelectorAll(".navbar-burger");
   const menu = document.querySelectorAll(".navbar-menu");
 
@@ -219,7 +217,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // close
   const close = document.querySelectorAll(".navbar-close");
   const backdrop = document.querySelectorAll(".navbar-backdrop");
 

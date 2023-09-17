@@ -8,11 +8,12 @@
           </label>
           <input
             name="universityName"
+            v-model="universityName"
             class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-yellow-500 focus:shadow-md"
           />
         </div>
 
-        <Listbox as="div" v-model="selected">
+        <Listbox as="div" v-model="certificateType">
           <ListboxLabel
             class="block text-sm font-medium leading-6 text-gray-900"
             >Vrsta dokumenta</ListboxLabel
@@ -86,6 +87,7 @@
         </label>
         <input
           type="date"
+          v-model="certificateDate"
           id="start"
           name="trip-start"
           min="2018-01-01"
@@ -161,6 +163,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/vue/20/solid";
 import { store } from "../main";
 import { pinFileToIPFS } from "../pinataService";
+import { callContractFunction } from "../ethersService";
 const setRef = () => {
   fileInput.value = document.getElementById("file");
 };
@@ -180,17 +183,57 @@ const today = computed(() => {
 
 const uploadedFileName = ref("");
 const fileInput = ref(null);
-const checkFileInput = () => {
-  console.log(fileInput.value);
-};
+
+const universityName = ref("");
+const certificateType = ref("");
+const certificateDate = ref("");
+
 const uploadFile = async () => {
   try {
+    const currentAccount = store.currentAccount;
+
     if (fileInput.value) {
       const file = fileInput.value.files[0];
       if (file) {
         const metadata = { name: "Your metadata here" };
-        await pinFileToIPFS(file, metadata);
-        console.log("File uploaded successfully");
+        const ipfsHash = await pinFileToIPFS(file, metadata);
+
+        if (ipfsHash) {
+          const array = new Uint8Array(16);
+          window.crypto.getRandomValues(array);
+          const uri = Array.from(array)
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
+
+          const actualUniversityName = universityName.value;
+          const actualCertificateType = certificateType.value.name;
+          const actualCertificateDate = certificateDate.value;
+
+          const { transactionResponse, txHash } = await callContractFunction(
+            "mint",
+            currentAccount,
+            uri,
+            ipfsHash,
+            actualUniversityName,
+            actualCertificateType,
+            actualCertificateDate
+          );
+
+          if (txHash) {
+            console.log("Transaction hash:", txHash);
+            store.setTxHash(ipfsHash, txHash);
+          }
+
+          if (transactionResponse) {
+            console.log("Transaction Response:", transactionResponse);
+          }
+
+          if (txHash) {
+            console.log("Transaction hash:", txHash);
+            store.setTxHash(ipfsHash, txHash);
+          }
+          console.log("NFT minted successfully");
+        }
       }
     }
   } catch (error) {
@@ -201,23 +244,19 @@ const uploadFile = async () => {
 const certificatesTypes = [
   {
     id: 1,
-    name: "Završni rad",
+    name: "Završni radovi",
   },
   {
     id: 2,
-    name: "Diplomski rad",
+    name: "Diplomski radovi",
   },
   {
     id: 3,
-    name: "Diploma (preddiplomski)",
+    name: "Diplome (preddiplomski)",
   },
   {
     id: 4,
-    name: "Diploma (diplomski)",
-  },
-  {
-    id: 5,
-    name: "Ostalo",
+    name: "Diplome (diplomski)",
   },
 ];
 

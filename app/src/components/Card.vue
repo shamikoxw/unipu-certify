@@ -1,48 +1,71 @@
 <template>
-  <div class="max-w-sm w-full lg:max-w-full lg:flex">
+  <div v-if="nft && nft.uri" class="max-w-sm w-full lg:max-w-full lg:flex">
     <div
       class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-      style="background-image: url('/img/card-left.jpg')"
-      title="Woman holding a mug"
+      title="NFT Image"
     ></div>
+
     <div
       class="bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal"
     >
       <div class="mb-8">
-        <p class="text-sm text-gray-600 flex items-center">
-          <svg
-            class="fill-current text-gray-500 w-3 h-3 mr-2"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M4 8V6a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z"
-            />
-          </svg>
-          Members only
-        </p>
+        <iframe
+          :src="'https://ipfs.io/ipfs/' + nft.ipfsHash"
+          width="400"
+          height="500"
+        ></iframe>
+
         <div class="text-gray-900 font-bold text-xl mb-2">
-          Can coffee make you a better developer?
+          {{ nft.universityName }}
         </div>
         <p class="text-gray-700 text-base">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus
-          quia, nulla! Maiores et perferendis eaque, exercitationem praesentium
-          nihil.
+          {{ nft.certificateType }}
+        </p>
+        <p class="text-gray-700 text-base">
+          {{ nft.certificateDate }}
         </p>
       </div>
       <div class="flex items-center">
-        <img
-          class="w-10 h-10 rounded-full mr-4"
-          src="https://thesoftwarepro.com/wp-content/uploads/2019/12/microsoft-office-pdf-document-953x1024.jpg"
-          alt="Avatar of Jonathan Reinink"
-        />
         <div class="text-sm">
-          <p class="text-gray-900 leading-none">Jonathan Reinink</p>
-          <p class="text-gray-600">Aug 18</p>
+          <p class="text-gray-900 leading-none">
+            Vlasnik: {{ nft.ownerAddress }}
+          </p>
+          <p class="text-gray-600">URI: {{ nft.uri }}</p>
         </div>
       </div>
+      <button @click="verifyCertificate(nft.id)" class="btn btn-verify">
+        Validiraj
+      </button>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { verifyCertificateOnChain } from "../ethersService";
+
+const props = defineProps({
+  nft: {
+    type: Object,
+    required: true,
+  },
+});
+const nft = ref(props.nft);
+console.log(nft);
+
+async function verifyCertificate(tokenId) {
+  const uiDetails = {
+    uri: nft.value.uri,
+    ipfsHash: nft.value.ipfsHash,
+    universityName: nft.value.universityName,
+    certificateType: nft.value.certificateType,
+    certificateDate: nft.value.certificateDate,
+  };
+  const isValid = await verifyCertificateOnChain(tokenId, uiDetails);
+  if (isValid) {
+    alert("Dokument je validan.");
+  } else {
+    alert("Dokument nije validan!");
+  }
+}
+</script>

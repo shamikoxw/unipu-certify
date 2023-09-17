@@ -29,6 +29,10 @@ const pinFileToIPFS = async (file, metadata) => {
       }
     );
     console.log(res.data);
+    if (res.data && res.data.IpfsHash) {
+      return res.data.IpfsHash;
+    }
+    return null;
   } catch (error) {
     console.error("An error occurred while pinning the file to IPFS:", error);
   }

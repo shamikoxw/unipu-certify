@@ -71,19 +71,32 @@
     </TransitionRoot>
   </div>
 
+  <div class="flex justify-center items-center">
+    <Search @update:searchQuery="updateSearchQuery" />
+  </div>
+
   <div class="flex flex-col p-6">
     <p><b>Povezani novčanik:</b> {{ store.currentAccount }}</p>
     <p v-if="store.isAdmin" class="mb-12">Dobro došli, <b>admin</b>!</p>
 
-    <Card></Card>
+    <div class="my-6">
+      <div class="flex flex-row">
+        <Card v-for="nft in filteredNFTs" :key="nft.id" :nft="nft" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import Card from "../components/Card.vue";
-import { ref, onMounted, computed } from "vue";
-import { initializeEthers, connectWallet, getContract } from "../ethersService";
-import { pinFileToIPFS } from "../pinataService";
+import Search from "../components/Search.vue";
+import { ref, onMounted, computed, watch } from "vue";
+import {
+  initializeEthers,
+  fetchMintedNFTsForUser,
+  connectWallet,
+  getContract,
+} from "../ethersService";
 import { store } from "../main";
 
 import {
@@ -95,6 +108,7 @@ import {
 } from "@headlessui/vue";
 
 const isOpen = ref(true);
+const userNFTs = ref([]);
 
 function closeModal() {
   isOpen.value = false;
@@ -103,12 +117,22 @@ function openModal() {
   isOpen.value = true;
 }
 
-// Initialize ethers when the component is mounted
-onMounted(() => {
-  initializeEthers();
+onMounted(async () => {
+  await initializeEthers();
   store.uploadPage = false;
   console.log("store.uploadPage", store.uploadPage);
+
+  if (store.currentAccount) {
+    userNFTs.value = await fetchMintedNFTsForUser(store.currentAccount);
+  }
 });
+
+watch(
+  () => store.searchQuery,
+  (newVal, oldVal) => {
+    console.log("store.searchQuery changed:", newVal);
+  }
+);
 
 const handleConnectWallet = async () => {
   try {
@@ -119,11 +143,39 @@ const handleConnectWallet = async () => {
     const contractInstance = getContract(); // Get the contract
     const adminAddress = await contractInstance.admin(); // Assuming admin is a public variable in your contract
     closeModal();
+    userNFTs.value = await fetchMintedNFTsForUser(store.currentAccount);
+
     if (account.toLowerCase() === adminAddress.toLowerCase()) {
       store.isAdmin = true;
     }
   } catch (error) {
     console.log("Error connecting wallet:", error);
   }
+};
+
+const selectedMenuItem = computed(() => store.selectedMenuItem);
+
+const filteredNFTs = computed(() => {
+  let nfts = userNFTs.value;
+
+  if (store.searchQuery) {
+    nfts = nfts.filter(
+      (nft) =>
+        nft.uri.toLowerCase().includes(store.searchQuery.toLowerCase()) ||
+        nft.ownerAddress.toLowerCase().includes(store.searchQuery.toLowerCase())
+    );
+  }
+  console.log(nfts);
+
+  if (selectedMenuItem.value && selectedMenuItem.value !== "Sve") {
+    nfts = nfts.filter((nft) => nft.certificateType === selectedMenuItem.value);
+  }
+  console.log(nfts);
+  return nfts;
+});
+
+const updateSearchQuery = (newSearchQuery) => {
+  console.log(newSearchQuery);
+  store.searchQuery = newSearchQuery;
 };
 </script>
