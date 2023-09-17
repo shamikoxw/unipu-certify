@@ -6,6 +6,14 @@ const routes = [
     name: "Main",
     component: () => import("../views/MainView.vue"),
   },
+  {
+    meta: {
+      requiresAdmin: true,
+    },
+    path: "/upload",
+    name: "Upload",
+    component: () => import("../views/UploadView.vue"),
+  },
 ];
 
 const router = createRouter({

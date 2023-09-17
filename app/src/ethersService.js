@@ -13,6 +13,8 @@ let signer;
 let contract;
 let writableContract;
 
+let key = import.meta.env.VITE_PINATA_API_KEY;
+
 export async function initializeEthers() {
   // Made it asynchronous
   console.log("Initializing Ethers");
