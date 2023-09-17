@@ -1,16 +1,9 @@
 <template>
   <div class="flex items-center justify-center p-12">
     <div class="mx-auto w-full max-w-[550px] bg-white">
-      <form
-        class="py-6 px-9"
-        action="https://formbold.com/s/FORM_ID"
-        method="POST"
-      >
+      <form @submit.prevent="uploadFile" class="py-6 px-9" method="POST">
         <div class="mb-5">
-          <label
-            for="email"
-            class="mb-3 block text-base font-medium text-[#07074D]"
-          >
+          <label class="block text-sm font-medium leading-6 text-gray-900">
             Institucija koja je izdala dokument
           </label>
           <input
@@ -51,14 +44,14 @@
               >
                 <ListboxOption
                   as="template"
-                  v-for="person in people"
-                  :key="person.id"
-                  :value="person"
+                  v-for="c in certificatesTypes"
+                  :key="c.id"
+                  :value="c"
                   v-slot="{ active, selected }"
                 >
                   <li
                     :class="[
-                      active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                      active ? 'bg-yellow-600 text-white' : 'text-gray-900',
                       'relative cursor-default select-none py-2 pl-3 pr-9',
                     ]"
                   >
@@ -68,7 +61,7 @@
                           selected ? 'font-semibold' : 'font-normal',
                           'ml-3 block truncate',
                         ]"
-                        >{{ person.name }}</span
+                        >{{ c.name }}</span
                       >
                     </div>
 
@@ -88,23 +81,33 @@
           </div>
         </Listbox>
 
+        <label class="mt-4 block text-sm font-medium leading-6 text-gray-900">
+          Datum izdavanja
+        </label>
         <input
           type="date"
           id="start"
           name="trip-start"
-          value="2018-07-22"
           min="2018-01-01"
-          max="2018-12-31"
-          class="mt-4 w-full rounded-md border border-[#e0e0e0] bg-white py-1 pl-6 pr-2 text-base font-medium text-[#6B7280] outline-none focus:border-yellow-500 focus:shadow-md"
+          :max="today"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 pl-6 pr-2 text-base outline-none focus:border-yellow-500 focus:shadow-md"
         />
 
         <div class="mb-6 pt-4">
-          <label class="mb-5 block text-xl font-semibold text-[#07074D]">
+          <label class="block text-sm font-medium leading-6 text-gray-900">
             Učitaj dokument
           </label>
 
           <div class="mb-8">
-            <input type="file" name="file" id="file" class="sr-only" />
+            <input
+              type="file"
+              name="file"
+              id="file"
+              class="sr-only"
+              @click="setRef"
+              @change="uploadedFileName = $event.target.files[0]?.name || ''"
+            />
+
             <label
               for="file"
               class="relative flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-12 text-center"
@@ -121,6 +124,12 @@
                 >
                   Pretraži
                 </span>
+                <span
+                  v-if="uploadedFileName"
+                  class="block text-sm text-gray-600"
+                >
+                  {{ uploadedFileName }}
+                </span>
               </div>
             </label>
           </div>
@@ -128,6 +137,8 @@
 
         <div>
           <button
+            @click="uploadFile"
+            type="button"
             class="hover:shadow-form w-full rounded-md bg-yellow-500 py-3 px-8 text-center text-base font-semibold text-white outline-none"
           >
             Dodaj
@@ -139,7 +150,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import {
   Listbox,
   ListboxButton,
@@ -149,13 +160,45 @@ import {
 } from "@headlessui/vue";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/vue/20/solid";
 import { store } from "../main";
+import { pinFileToIPFS } from "../pinataService";
+const setRef = () => {
+  fileInput.value = document.getElementById("file");
+};
 
 onMounted(() => {
   console.log("mounted");
   store.uploadPage = true;
 });
 
-const people = [
+const today = computed(() => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+});
+
+const uploadedFileName = ref("");
+const fileInput = ref(null);
+const checkFileInput = () => {
+  console.log(fileInput.value);
+};
+const uploadFile = async () => {
+  try {
+    if (fileInput.value) {
+      const file = fileInput.value.files[0];
+      if (file) {
+        const metadata = { name: "Your metadata here" };
+        await pinFileToIPFS(file, metadata);
+        console.log("File uploaded successfully");
+      }
+    }
+  } catch (error) {
+    console.error("An error occurred while uploading the file:", error);
+  }
+};
+
+const certificatesTypes = [
   {
     id: 1,
     name: "Završni rad",
@@ -178,5 +221,5 @@ const people = [
   },
 ];
 
-const selected = ref(people[3]);
+const selected = ref(certificatesTypes[0]);
 </script>

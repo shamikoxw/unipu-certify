@@ -4,24 +4,19 @@ import * as fs from "fs";
 
 const JWT = import.meta.env.VITE_PINATA_JWT;
 
-const pinFileToIPFS = async () => {
-  const formData = new FormData();
-  const src = "path/to/file.png";
-
-  const file = fs.createReadStream(src);
-  formData.append("file", file);
-
-  const pinataMetadata = JSON.stringify({
-    name: "File name",
-  });
-  formData.append("pinataMetadata", pinataMetadata);
-
-  const pinataOptions = JSON.stringify({
-    cidVersion: 0,
-  });
-  formData.append("pinataOptions", pinataOptions);
-
+const pinFileToIPFS = async (file, metadata) => {
   try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const pinataMetadata = JSON.stringify(metadata);
+    formData.append("pinataMetadata", pinataMetadata);
+
+    const pinataOptions = JSON.stringify({
+      cidVersion: 0,
+    });
+    formData.append("pinataOptions", pinataOptions);
+
     const res = await axios.post(
       "https://api.pinata.cloud/pinning/pinFileToIPFS",
       formData,
@@ -35,7 +30,7 @@ const pinFileToIPFS = async () => {
     );
     console.log(res.data);
   } catch (error) {
-    console.log(error);
+    console.error("An error occurred while pinning the file to IPFS:", error);
   }
 };
 
