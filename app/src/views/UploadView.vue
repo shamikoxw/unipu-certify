@@ -4,6 +4,16 @@
       <form @submit.prevent="uploadFile" class="py-6 px-9" method="POST">
         <div class="mb-5">
           <label class="block text-sm font-medium leading-6 text-gray-900">
+            Adresa novčanika kome se dodjeljuje certifikat
+          </label>
+          <input
+            name="walletAddress"
+            v-model="walletAddress"
+            class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-yellow-500 focus:shadow-md"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="block text-sm font-medium leading-6 text-gray-900">
             Institucija koja je izdala dokument
           </label>
           <input
@@ -183,7 +193,7 @@ const today = computed(() => {
 
 const uploadedFileName = ref("");
 const fileInput = ref(null);
-
+const walletAddress = ref("");
 const universityName = ref("");
 const certificateType = ref("");
 const certificateDate = ref("");
@@ -205,13 +215,15 @@ const uploadFile = async () => {
             .map((b) => b.toString(16).padStart(2, "0"))
             .join("");
 
+          console.log(walletAddress.value);
+          const actualWalletAddress = walletAddress.value;
           const actualUniversityName = universityName.value;
           const actualCertificateType = certificateType.value.name;
           const actualCertificateDate = certificateDate.value;
 
           const { transactionResponse, txHash } = await callContractFunction(
             "mint",
-            currentAccount,
+            actualWalletAddress,
             uri,
             ipfsHash,
             actualUniversityName,

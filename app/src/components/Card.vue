@@ -15,8 +15,8 @@
           height="500"
         ></iframe>
 
-        <div class="text-gray-900 font-bold text-xl mb-2">
-          {{ nft.universityName }}
+        <div class="text-gray-900 text-xl mb-2">
+          <b>Izdao:</b> {{ nft.universityName }}
         </div>
         <p class="text-gray-700 text-base">
           {{ nft.certificateType }}
@@ -31,6 +31,14 @@
             Vlasnik: {{ nft.ownerAddress }}
           </p>
           <p class="text-gray-600">URI: {{ nft.uri }}</p>
+
+          <a
+            class="text-gray-600"
+            target="_blank="
+            :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
+          >
+            NFT: {{ "https://ipfs.io/ipfs/" + nft.ipfsHash }}
+          </a>
         </div>
       </div>
       <button @click="verifyCertificate(nft.id)" class="btn btn-verify">

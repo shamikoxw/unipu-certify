@@ -14,6 +14,14 @@ const routes = [
     name: "Upload",
     component: () => import("../views/UploadView.vue"),
   },
+  {
+    meta: {
+      requiresAdmin: false,
+    },
+    path: "/my-documents",
+    name: "My documents",
+    component: () => import("../views/MyDocuments.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -7,7 +7,7 @@
       <button
         type="button"
         @click="openModal"
-        class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+        class="rounded-md bg-black bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
       >
         Poveži novčanik
       </button>
@@ -76,7 +76,26 @@
   </div>
 
   <div class="flex flex-col p-6">
-    <p><b>Povezani novčanik:</b> {{ store.currentAccount }}</p>
+    <div class="hidden lg:flex mb-4">
+      <a
+        class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
+        :href="'https://sepolia.etherscan.io/address/' + store.currentAccount"
+        target="_blank"
+      >
+        Moj novčanik (etherscan)
+      </a>
+    </div>
+
+    <div class="hidden lg:flex">
+      <a
+        class="py-2 px-6 bg-gray-500 hover:bg-gray-600 text-sm text-white font-bold rounded-xl transition duration-200"
+        :href="store.smartContractAddress"
+        target="_blank"
+      >
+        Pametni ugovor (etherscan)
+      </a>
+    </div>
+
     <p v-if="store.isAdmin" class="mb-12">Dobro došli, <b>admin</b>!</p>
 
     <div class="my-6">
@@ -93,7 +112,7 @@ import Search from "../components/Search.vue";
 import { ref, onMounted, computed, watch } from "vue";
 import {
   initializeEthers,
-  fetchMintedNFTsForUser,
+  fetchAllMintedNFTs,
   connectWallet,
   getContract,
 } from "../ethersService";
@@ -108,7 +127,6 @@ import {
 } from "@headlessui/vue";
 
 const isOpen = ref(true);
-const userNFTs = ref([]);
 
 function closeModal() {
   isOpen.value = false;
@@ -120,10 +138,11 @@ function openModal() {
 onMounted(async () => {
   await initializeEthers();
   store.uploadPage = false;
+  store.myDocumentsPage = false;
   console.log("store.uploadPage", store.uploadPage);
 
   if (store.currentAccount) {
-    userNFTs.value = await fetchMintedNFTsForUser(store.currentAccount);
+    store.certificates = await fetchAllMintedNFTs();
   }
 });
 
@@ -140,10 +159,11 @@ const handleConnectWallet = async () => {
     console.log("Connected wallet:", account);
     store.currentAccount = account;
 
-    const contractInstance = getContract(); // Get the contract
-    const adminAddress = await contractInstance.admin(); // Assuming admin is a public variable in your contract
+    const contractInstance = getContract();
+    const adminAddress = await contractInstance.getAdmin();
+
     closeModal();
-    userNFTs.value = await fetchMintedNFTsForUser(store.currentAccount);
+    store.certificates = await fetchAllMintedNFTs();
 
     if (account.toLowerCase() === adminAddress.toLowerCase()) {
       store.isAdmin = true;
@@ -156,7 +176,7 @@ const handleConnectWallet = async () => {
 const selectedMenuItem = computed(() => store.selectedMenuItem);
 
 const filteredNFTs = computed(() => {
-  let nfts = userNFTs.value;
+  let nfts = store.certificates;
 
   if (store.searchQuery) {
     nfts = nfts.filter(

@@ -4,11 +4,15 @@ export const useMainStore = defineStore("main", {
   state: () => ({
     router: null,
     uploadPage: false,
+    myDocumentsPage: false,
     currentAccount: null,
     isAdmin: false,
     txHashes: {},
     selectedMenuItem: "Sve",
     searchQuery: "",
+    certificates: [],
+    myCertificates: [],
+    smartContractAddress: "",
   }),
   getters: {
     getRouter() {

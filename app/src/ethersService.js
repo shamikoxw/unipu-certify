@@ -1,10 +1,8 @@
 import { ethers } from "ethers";
-import { store } from "./main";
-import { abi } from "./abi";
+import { store } from "./main"; // Assuming you have a store for state management
+import { abi } from "./abi"; // Make sure to update this ABI to your new contract's ABI
 
-const contractAddress = "0xbdb36402b0BFa7E5ccDa0E826E1De80bb8fcd1F7";
-
-console.log(contractAddress);
+const contractAddress = "0x9A4169AEE84d196Fd85765A710dA1437EBEbfbC4";
 
 const contractABI = abi;
 
@@ -13,24 +11,23 @@ let signer;
 let contract;
 let writableContract;
 
-let key = import.meta.env.VITE_PINATA_API_KEY;
-
 export async function initializeEthers() {
-  // Made it asynchronous
   console.log("Initializing Ethers");
 
   if (typeof window.ethereum !== "undefined") {
     provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = await provider.getSigner(); // Awaited the async method
+    signer = await provider.getSigner();
   } else {
-    var provider = ethers.getDefaultProvider("sepolia");
+    provider = ethers.getDefaultProvider("sepolia");
   }
 
   if (!provider || !contractAddress || !contractABI) {
-    throw new Error("Essential contract details missing"); // Error check
+    throw new Error("Essential contract details missing");
   }
 
   contract = new ethers.Contract(contractAddress, contractABI, provider);
+  store.smartContractAddress =
+    "https://sepolia.etherscan.io/address/" + contractAddress;
 
   if (signer) {
     writableContract = new ethers.Contract(
@@ -51,13 +48,6 @@ export async function connectWallet() {
   return accounts[0];
 }
 
-export function getAccounts() {
-  if (!signer) {
-    throw new Error("Signer is not initialized");
-  }
-  return signer.listAccounts();
-}
-
 export async function callContractFunction(funcName, ...args) {
   if (!writableContract || !writableContract[funcName]) {
     throw new Error(
@@ -65,8 +55,7 @@ export async function callContractFunction(funcName, ...args) {
     );
   }
   const transactionResponse = await writableContract[funcName](...args);
-  console.log(transactionResponse.hash);
-  await transactionResponse.wait(); // Wait for the transaction to be mined
+  await transactionResponse.wait();
   return {
     transactionResponse,
     txHash: transactionResponse.hash,
@@ -75,7 +64,7 @@ export async function callContractFunction(funcName, ...args) {
 
 export async function verifyCertificateOnChain(tokenId, uiDetails) {
   const certificate = await contract.certificates(tokenId);
-  console.log(certificate);
+
   if (
     certificate.uri === uiDetails.uri &&
     certificate.ipfsHash === uiDetails.ipfsHash &&
@@ -89,18 +78,35 @@ export async function verifyCertificateOnChain(tokenId, uiDetails) {
   }
 }
 
-export async function fetchMintedNFTsForUser(account) {
+export async function fetchAllMintedNFTs() {
   const contract = getContract();
+  const totalCertificates = await contract.totalCertificates();
+  const allNFTs = [];
+
+  for (let i = 0; i < totalCertificates; i++) {
+    const certificate = await contract.certificates(i);
+
+    allNFTs.push({
+      id: i,
+      uri: certificate.uri,
+      ipfsHash: certificate.ipfsHash,
+      universityName: certificate.universityName,
+      certificateType: certificate.certificateType,
+      certificateDate: certificate.certificateDate,
+    });
+  }
+
+  return allNFTs;
+}
+
+export async function fetchMintedNFTsForUser(account) {
   const totalCertificates = await contract.totalCertificates();
   const userNFTs = [];
 
   for (let i = 0; i < totalCertificates; i++) {
-    const certificate = await contract.certificates(i);
-    const ownerAddress = await contract.certificateOwners(i);
-
-    if (ownerAddress.toLowerCase() === account.toLowerCase()) {
-      const txHash = store.setTxHash(certificate.ipfsHash);
-
+    const owner = await contract.getOwnerOfToken(i);
+    if (owner.toLowerCase() === account.toLowerCase()) {
+      const certificate = await contract.certificates(i);
       userNFTs.push({
         id: i,
         uri: certificate.uri,
@@ -108,8 +114,6 @@ export async function fetchMintedNFTsForUser(account) {
         universityName: certificate.universityName,
         certificateType: certificate.certificateType,
         certificateDate: certificate.certificateDate,
-        ownerAddress: ownerAddress,
-        transactionHash: txHash,
       });
     }
   }
@@ -130,3 +134,5 @@ export function getWritableContract() {
   }
   return writableContract;
 }
+
+// Add or remove any other functions you need.

@@ -1,5 +1,8 @@
 <template>
   <body v-if="store.currentAccount" class="bg-white">
+    <div class="flex justify-end mr-6">
+      <p><b>Trenutno prijavljen:</b> {{ store.currentAccount }}</p>
+    </div>
     <nav class="relative px-4 py-4 flex justify-between items-center bg-white">
       <a class="flex items-center text-3xl font-bold leading-none" href="/">
         <img
@@ -98,7 +101,6 @@
           </a>
         </li>
       </ul>
-
       <a
         class="hidden lg:inline-block py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
         href="#"
@@ -106,13 +108,23 @@
         >Odjava</a
       >
     </nav>
-    <router-link :to="store.uploadPage ? '/' : '/upload'">
-      <div v-if="store.isAdmin" class="hidden lg:flex justify-center">
+    <router-link v-if="store.isAdmin" :to="store.uploadPage ? '/' : '/upload'">
+      <div class="hidden lg:flex justify-center">
         <a
           class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"
         >
           {{ store.uploadPage ? "Nazad" : "Pohrani novi dokument" }}
+        </a>
+      </div>
+    </router-link>
+    <router-link v-else :to="store.myDocumentsPage ? '/' : 'my-documents'">
+      <div class="hidden lg:flex justify-center">
+        <a
+          class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
+          href="#"
+        >
+          {{ store.myDocumentsPage ? "Nazad" : "Pregledaj svoje dokumente" }}
         </a>
       </div>
     </router-link>
