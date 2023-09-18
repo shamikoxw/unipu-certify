@@ -33,3 +33,17 @@ UNIPU Certify is a Web3 application that enables educational institutions to min
 [Pula Faculty of Informatics](https://fipu.unipu.hr/)  
 Blockchain applications, Academic Year 2022./2023.  
 Mentor: **Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
+
+### Screenshots
+
+<p float="left">
+  <img src="/Screenshots/prijava.png?raw=true" width="256" />
+  <img src="/Screenshots/main_page.png?raw=true" width="256" /> 
+  <img src="/Screenshots/validacija.png?raw=true" width="256" />
+  <img src="/Screenshots/mint_new_cert.png?raw=true" width="256" />
+  <img src="/Screenshots/minting_new_cert.png?raw=true" width="256" />
+  <img src="/Screenshots/ipfs_preview.png?raw=true" width="256" />
+  <img src="/Screenshots/etherscan.png?raw=true" width="256" />
+  <img src="/Screenshots/etherscane_nft_token.png?raw=true" width="256" />
+  <img src="/Screenshots/remix.png?raw=true" width="256" />
+</p>
