@@ -18,6 +18,15 @@ UNIPU Certify is a Web3 application that enables educational institutions to min
 - **Decentralized Storage**: IPFS via Pinata
 - **Ethereum Provider**: MetaMask
 
+## Usage
+### Admin Users  
+- View all certificates
+- Mint NFT certificates to student addresses.
+### Student Users  
+- View all certificates
+- View your certificates with PDF preview.
+- Validate them on the blockchain.
+
 ## Organization
 
 [Juraj Dobrila University of Pula](http://www.unipu.hr/)  
