@@ -135,4 +135,6 @@ export function getWritableContract() {
   return writableContract;
 }
 
-// Add or remove any other functions you need.
+export async function getOwnerAddress(tokenId) {
+  return await contract.getOwnerOfToken(tokenId);
+}
