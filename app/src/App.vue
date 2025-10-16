@@ -1,7 +1,7 @@
 <template>
   <body v-if="store.currentAccount" class="bg-white">
     <div class="flex justify-end mr-6">
-      <p><b>Trenutno prijavljen:</b> {{ store.currentAccount }}</p>
+      <p><b>当前已登录：</b> {{ store.currentAccount }}</p>
     </div>
     <nav class="relative px-4 py-4 flex justify-between items-center bg-white">
       <a class="flex items-center text-3xl font-bold leading-none" href="/">
@@ -28,76 +28,76 @@
       <ul
         class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:items-center lg:w-auto lg:space-x-6"
       >
-        <li @click="selectMenuItem('Sve')">
+        <li @click="selectMenuItem('全部')">
           <a
             :class="
-              selectedMenuItem === 'Sve'
+              selectedMenuItem === '全部'
                 ? 'text-yellow-600 font-bold'
                 : 'text-gray-400 hover:text-gray-500'
             "
             href="#"
           >
-            Sve
+            全部
           </a>
         </li>
         <li class="text-gray-300">
           <span class="material-icons">more_vert</span>
         </li>
-        <li @click="selectMenuItem('Završni radovi')">
+        <li @click="selectMenuItem('毕业论文')">
           <a
             :class="
-              selectedMenuItem === 'Završni radovi'
+              selectedMenuItem === '毕业论文'
                 ? 'text-yellow-600 font-bold'
                 : 'text-gray-400 hover:text-gray-500'
             "
             href="#"
           >
-            Završni radovi
+            毕业论文
           </a>
         </li>
         <li class="text-gray-300">
           <span class="material-icons">more_vert</span>
         </li>
-        <li @click="selectMenuItem('Diplomski radovi')">
+        <li @click="selectMenuItem('硕士论文')">
           <a
             :class="
-              selectedMenuItem === 'Diplomski radovi'
+              selectedMenuItem === '硕士论文'
                 ? 'text-yellow-600 font-bold'
                 : 'text-gray-400 hover:text-gray-500'
             "
             href="#"
           >
-            Diplomski radovi
+            硕士论文
           </a>
         </li>
         <li class="text-gray-300">
           <span class="material-icons">more_vert</span>
         </li>
-        <li @click="selectMenuItem('Diplome (preddiplomski)')">
+        <li @click="selectMenuItem('学士学位证书')">
           <a
             :class="
-              selectedMenuItem === 'Diplome (preddiplomski)'
+              selectedMenuItem === '学士学位证书'
                 ? 'text-yellow-600 font-bold'
                 : 'text-gray-400 hover:text-gray-500'
             "
             href="#"
           >
-            Diplome (preddiplomski)
+            学士学位证书
           </a>
         </li>
         <li class="text-gray-300">
           <span class="material-icons">more_vert</span>
         </li>
-        <li @click="selectMenuItem('Diplome (diplomski)')">
+        <li @click="selectMenuItem('硕士学位证书')">
           <a
             :class="
-              selectedMenuItem === 'Diplome (diplomski)'
+              selectedMenuItem === '硕士学位证书'
                 ? 'text-yellow-600 font-bold'
                 : 'text-gray-400 hover:text-gray-500'
             "
             href="#"
           >
-            Diplome (diplomski)
+            硕士学位证书
           </a>
         </li>
       </ul>
@@ -105,7 +105,7 @@
         class="hidden lg:inline-block py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
         href="#"
         @click="store.disconnect()"
-        >Odjava</a
+        >退出</a
       >
     </nav>
     <router-link v-if="store.isAdmin" :to="store.uploadPage ? '/' : '/upload'">
@@ -114,7 +114,7 @@
           class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"
         >
-          {{ store.uploadPage ? "Nazad" : "Pohrani novi dokument" }}
+          {{ store.uploadPage ? "返回" : "上传新文档" }}
         </a>
       </div>
     </router-link>
@@ -124,7 +124,7 @@
           class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"
         >
-          {{ store.myDocumentsPage ? "Nazad" : "Pregledaj svoje dokumente" }}
+          {{ store.myDocumentsPage ? "返回" : "查看我的文档" }}
         </a>
       </div>
     </router-link>

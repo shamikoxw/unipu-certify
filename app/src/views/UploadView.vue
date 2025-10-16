@@ -4,7 +4,7 @@
       <form @submit.prevent="uploadFile" class="py-6 px-9" method="POST">
         <div class="mb-5">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            Adresa novčanika kome se dodjeljuje certifikat
+            接收证书的钱包地址
           </label>
           <input
             name="walletAddress"
@@ -14,7 +14,7 @@
         </div>
         <div class="mb-5">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            Institucija koja je izdala dokument
+            颁发机构
           </label>
           <input
             name="universityName"
@@ -26,7 +26,7 @@
         <Listbox as="div" v-model="certificateType">
           <ListboxLabel
             class="block text-sm font-medium leading-6 text-gray-900"
-            >Vrsta dokumenta</ListboxLabel
+            >文档类型</ListboxLabel
           >
           <div class="relative mt-2">
             <ListboxButton
@@ -93,7 +93,7 @@
         </Listbox>
 
         <label class="mt-4 block text-sm font-medium leading-6 text-gray-900">
-          Datum izdavanja
+          颁发日期
         </label>
         <input
           type="date"
@@ -107,7 +107,7 @@
 
         <div class="mb-6 pt-4">
           <label class="block text-sm font-medium leading-6 text-gray-900">
-            Učitaj dokument
+            上传文档
           </label>
 
           <div class="mb-8">
@@ -126,15 +126,15 @@
             >
               <div>
                 <span class="mb-2 block text-xl font-semibold text-[#07074D]">
-                  Povuci ovdje
+                  拖拽到此处
                 </span>
                 <span class="mb-2 block text-base font-medium text-[#6B7280]">
-                  ili
+                  或者
                 </span>
                 <span
                   class="inline-flex rounded border border-[#e0e0e0] py-2 px-7 text-base font-medium text-[#07074D]"
                 >
-                  Pretraži
+                  浏览
                 </span>
                 <span
                   v-if="uploadedFileName"
@@ -153,7 +153,7 @@
             type="button"
             class="hover:shadow-form w-full rounded-md bg-yellow-500 py-3 px-8 text-center text-base font-semibold text-white outline-none"
           >
-            Dodaj
+            提交
           </button>
         </div>
       </form>
@@ -256,19 +256,19 @@ const uploadFile = async () => {
 const certificatesTypes = [
   {
     id: 1,
-    name: "Završni radovi",
+    name: "毕业论文",
   },
   {
     id: 2,
-    name: "Diplomski radovi",
+    name: "硕士论文",
   },
   {
     id: 3,
-    name: "Diplome (preddiplomski)",
+    name: "学士学位证书",
   },
   {
     id: 4,
-    name: "Diplome (diplomski)",
+    name: "硕士学位证书",
   },
 ];
 

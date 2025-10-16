@@ -9,7 +9,7 @@
         @click="openModal"
         class="rounded-md bg-black bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
       >
-        Poveži novčanik
+        连接钱包
       </button>
     </div>
     <TransitionRoot appear :show="isOpen" as="template">
@@ -46,11 +46,11 @@
                   as="h3"
                   class="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Poveži novčanik
+                  连接钱包
                 </DialogTitle>
                 <div class="mt-2">
                   <p class="text-sm text-gray-500">
-                    Poveži novčanik kako bi mogao pregledati dokumente.
+                    请先连接钱包以查看文档。
                   </p>
                 </div>
 
@@ -60,7 +60,7 @@
                     class="inline-flex justify-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl"
                     @click="handleConnectWallet"
                   >
-                    Poveži
+                    连接
                   </button>
                 </div>
               </DialogPanel>
@@ -82,7 +82,7 @@
         :href="'https://sepolia.etherscan.io/address/' + store.currentAccount"
         target="_blank"
       >
-        Moj novčanik (etherscan)
+        我的钱包（Etherscan）
       </a>
     </div>
 
@@ -92,11 +92,11 @@
         :href="store.smartContractAddress"
         target="_blank"
       >
-        Pametni ugovor (etherscan)
+        智能合约（Etherscan）
       </a>
     </div>
 
-    <p v-if="store.isAdmin" class="mb-12">Dobro došli, <b>admin</b>!</p>
+    <p v-if="store.isAdmin" class="mb-12">欢迎你，<b>管理员</b>！</p>
 
     <div class="my-6">
       <div class="flex flex-row">
@@ -187,7 +187,7 @@ const filteredNFTs = computed(() => {
   }
   console.log(nfts);
 
-  if (selectedMenuItem.value && selectedMenuItem.value !== "Sve") {
+  if (selectedMenuItem.value && selectedMenuItem.value !== "全部") {
     nfts = nfts.filter((nft) => nft.certificateType === selectedMenuItem.value);
   }
   console.log(nfts);

@@ -31,7 +31,7 @@ const filteredNFTs = computed(() => {
   }
   console.log(nfts);
 
-  if (selectedMenuItem.value && selectedMenuItem.value !== "Sve") {
+  if (selectedMenuItem.value && selectedMenuItem.value !== "全部") {
     nfts = nfts.filter((nft) => nft.certificateType === selectedMenuItem.value);
   }
   console.log(nfts);

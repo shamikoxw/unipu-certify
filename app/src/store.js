@@ -8,7 +8,7 @@ export const useMainStore = defineStore("main", {
     currentAccount: null,
     isAdmin: false,
     txHashes: {},
-    selectedMenuItem: "Sve",
+    selectedMenuItem: "全部",
     searchQuery: "",
     certificates: [],
     myCertificates: [],

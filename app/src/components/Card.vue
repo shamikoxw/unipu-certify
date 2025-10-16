@@ -16,7 +16,7 @@
         ></iframe>
 
         <div class="text-gray-900 text-xl mb-2">
-          <b>Izdao:</b> {{ nft.universityName }}
+          <b>颁发机构：</b> {{ nft.universityName }}
         </div>
         <p class="text-gray-700 text-base">
           {{ nft.certificateType }}
@@ -31,7 +31,7 @@
           <div class="flex items-center">
             <span class="icon-class-or-emoji">👤</span>
             <p class="text-gray-900 leading-none ml-2">
-              Vlasnik: {{ nft.ownerAddress }}
+              所有者：{{ nft.ownerAddress }}
             </p>
           </div>
           <div class="flex items-center">
@@ -46,7 +46,7 @@
               :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
               title="{{ 'https://ipfs.io/ipfs/' + nft.ipfsHash }}"
             >
-              NFT:
+              NFT：
               <a
                 class="underline"
                 :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
@@ -57,7 +57,7 @@
         </div>
       </div>
       <button @click="verifyCertificate(nft.id)" class="btn btn-verify">
-        Validiraj
+        验证
       </button>
     </div>
   </div>
@@ -92,9 +92,9 @@ async function verifyCertificate(tokenId) {
   nft.value.ownerAddress = ownerAddress;
   const isValid = await verifyCertificateOnChain(tokenId, uiDetails);
   if (isValid) {
-    alert("Dokument je validan.");
+    alert("文档有效。");
   } else {
-    alert("Dokument nije validan!");
+    alert("文档无效！");
   }
 }
 </script>
