@@ -52,7 +52,7 @@ UNIPU Certify 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为�
    npm install
    ```
 
-在桌面浏览器安装 MetaMask 插件（Chrome/Edge/Brave 均可），到浏览器扩展商店搜索“MetaMask”并安装
+3. 在桌面浏览器安装 MetaMask 插件（Chrome/Edge/Brave 均可），到浏览器扩展商店搜索“MetaMask”并安装
 
 <mark>**注：仓库的项目文件中已经配置好了测试用的钱包等，如需直接使用请跳至step4；如需另创建和使用自己的钱包等配置请继续阅读** </mark>
 
@@ -70,11 +70,17 @@ UNIPU Certify 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为�
 1. 打开 MetaMask → 右上角头像 → 设置 → 高级 → 打开“显示测试网络”。
 2. 切换网络：点击左侧中间的 Ethereum Mainnet，弹出 `select network` 窗口，选择 custom —— Sepolia
 
-#### [3] 领取测试币（Sepolia ETH）
+#### [3] 领取免费的测试币（Sepolia ETH）
+
+> 由于区块链上传输需要少量ETH作为“燃料”，故需要领取测试币
 
 - 打开一个水龙头（任选其一，按提示粘贴你的钱包地址领取）：
-    - https://sepolia-faucet.pk910.de（需要提供几分钟的CPU算力）
+    - https://sepolia-faucet.pk910.de
+
+      （需要提供几分钟的CPU算力）
+
     - https://faucets.chain.link/sepolia
+
 - 领取成功后，MetaMask 里应能看到少量 Sepolia ETH 余额（可能需要等待1-2分钟）
 
 ### step2 准备IPFS
