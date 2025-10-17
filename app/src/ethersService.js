@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { store } from "./main"; // Assuming you have a store for state management
 import { abi } from "./abi"; // Make sure to update this ABI to your new contract's ABI
 
-const contractAddress = "0x9A4169AEE84d196Fd85765A710dA1437EBEbfbC4";
+const contractAddress = "0xBbe71affc1D00a4b838147F079A4D4461b88EEe9";
 
 const contractABI = abi;
 
