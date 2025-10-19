@@ -9,11 +9,19 @@
       class="bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal"
     >
       <div class="mb-8">
-        <iframe
-          :src="'https://ipfs.io/ipfs/' + nft.ipfsHash"
-          width="400"
-          height="500"
-        ></iframe>
+        <div class="w-full h-96 bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center">
+          <div class="text-center">
+            <div class="text-gray-500 text-lg mb-2">📄</div>
+            <p class="text-gray-600">证书预览</p>
+            <a 
+              :href="'https://ipfs.io/ipfs/' + nft.ipfsHash" 
+              target="_blank"
+              class="text-blue-500 hover:text-blue-700 underline mt-2 inline-block"
+            >
+              点击查看完整证书
+            </a>
+          </div>
+        </div>
 
         <div class="text-gray-900 text-xl mb-2">
           <b>颁发机构：</b> {{ nft.universityName }}
