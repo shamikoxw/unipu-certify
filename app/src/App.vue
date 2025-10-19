@@ -10,7 +10,7 @@
           class="w-24 h-24"
           alt=""
         />
-        <h1 class="text-center text-gray-500">UNIPU CERTIFY</h1>
+        <h1 class="text-center text-gray-500">MY CERTIFY</h1>
       </a>
 
       <div class="lg:hidden">

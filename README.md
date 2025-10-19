@@ -1,8 +1,8 @@
-# UNIPU Certify: Mint Your Academic Certificates as NFTs 🎓🔗
+# MY Certify: Mint Your Academic Certificates as NFTs 🎓🔗
 
 ## 项目介绍
 
-UNIPU Certify 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为非同质化代币 (NFT)。该项目基于以太坊 Sepolia 测试网络构建，使用 IPFS 进行去中心化存储，允许用户直接在区块链上查看和验证其学术证书。
+MY CERTIFY (a fork of UNIPU Certify) 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为非同质化代币 (NFT)。该项目基于以太坊 Sepolia 测试网络构建，使用 IPFS 进行去中心化存储，允许用户直接在区块链上查看和验证其学术证书。
 
 ## 项目结构概览
 
@@ -54,7 +54,7 @@ UNIPU Certify 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为�
 
 3. 在桌面浏览器安装 MetaMask 插件（Chrome/Edge/Brave 均可），到浏览器扩展商店搜索“MetaMask”并安装
 
-<mark>**注：仓库的项目文件中已经配置好了测试用的钱包等，如需直接使用请跳至step4；如需另创建和使用自己的钱包等配置请继续阅读** </mark>
+<mark>**注：仓库的项目文件中已经配置好了测试用的钱包等（用附录的助记词导入），如需直接使用请跳至step4；如需另创建和使用自己的配置请继续阅读** </mark>
 
 ### step1 配置钱包
 
