@@ -22,6 +22,19 @@ const routes = [
     name: "My documents",
     component: () => import("../views/MyDocuments.vue"),
   },
+  {
+    path: "/alumni",
+    name: "Alumni",
+    component: () => import("../views/AlumniView.vue"),
+  },
+  {
+    meta: {
+      requiresAdmin: true,
+    },
+    path: "/token-mint",
+    name: "TokenMint",
+    component: () => import("../views/TokenMintView.vue"),
+  },
 ];
 
 const router = createRouter({

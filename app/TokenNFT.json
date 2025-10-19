@@ -1,0 +1,16 @@
+{
+  "description": "有权限访问校友门户的 Token NFT 特征列表",
+  "authorizedTokenFeatures": [
+    {
+      "tokenId": 12,
+      "certificateType": "Token认证",
+      "universityName": "TTT4",
+      "ipfsHash": "QmTokenCertification1760859032267",
+      "uri": "e3d93b2bff7c386a9de8329772cdd002",
+      "certificateDate": "2025-10-19",
+      "addedAt": "2025-10-19T07:30:53.674Z"
+    }
+  ],
+  "lastUpdated": "2025-10-19T07:30:56.039Z",
+  "version": "1.0.0"
+}

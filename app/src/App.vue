@@ -100,6 +100,17 @@
             硕士学位证书
           </a>
         </li>
+        <li class="text-gray-300">
+          <span class="material-icons">more_vert</span>
+        </li>
+        <li>
+          <router-link
+            to="/alumni"
+            class="text-gray-400 hover:text-gray-500 transition duration-200"
+          >
+            校友门户
+          </router-link>
+        </li>
       </ul>
       <a
         class="hidden lg:inline-block py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
@@ -108,16 +119,24 @@
         >退出</a
       >
     </nav>
-    <router-link v-if="store.isAdmin" :to="store.uploadPage ? '/' : '/upload'">
-      <div class="hidden lg:flex justify-center">
+    <div v-if="store.isAdmin" class="hidden lg:flex justify-center space-x-2">
+      <router-link :to="store.tokenMintPage ? '/' : '/token-mint'">
         <a
-          class="py-2 px-6 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
+          class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200"
+          href="#"
+        >
+          {{ store.tokenMintPage ? "返回" : "Token证书颁发" }}
+        </a>
+      </router-link>
+      <router-link :to="store.uploadPage ? '/' : '/upload'">
+        <a
+          class="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"
         >
           {{ store.uploadPage ? "返回" : "上传新文档" }}
         </a>
-      </div>
-    </router-link>
+      </router-link>
+    </div>
     <router-link v-else :to="store.myDocumentsPage ? '/' : 'my-documents'">
       <div class="hidden lg:flex justify-center">
         <a
