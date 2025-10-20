@@ -2,6 +2,11 @@
   <div class="flex items-center justify-center p-12">
     <div class="mx-auto w-full max-w-[550px] bg-white">
       <form @submit.prevent="uploadFile" class="py-6 px-9" method="POST">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">上传证书并铸造 NFT</h2>
+          <p class="text-gray-600">上传 PDF 文档，选择文档类型并铸造链上学术证书 NFT</p>
+        </div>
+
         <div class="mb-5">
           <label class="block text-sm font-medium leading-6 text-gray-900">
             接收证书的钱包地址
@@ -9,7 +14,9 @@
           <input
             name="walletAddress"
             v-model="walletAddress"
+            placeholder="0x..."
             class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-yellow-500 focus:shadow-md"
+            required
           />
         </div>
         <div class="mb-5">
@@ -19,11 +26,13 @@
           <input
             name="universityName"
             v-model="universityName"
+            placeholder="请输入颁发机构名称"
             class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-yellow-500 focus:shadow-md"
+            required
           />
         </div>
 
-        <Listbox as="div" v-model="certificateType">
+        <Listbox as="div" v-model="selected">
           <ListboxLabel
             class="block text-sm font-medium leading-6 text-gray-900"
             >文档类型</ListboxLabel
@@ -98,11 +107,12 @@
         <input
           type="date"
           v-model="certificateDate"
-          id="start"
-          name="trip-start"
+          id="certificateDate"
+          name="certificateDate"
           min="2018-01-01"
           :max="today"
           class="w-full rounded-md border border-[#e0e0e0] bg-white py-1 pl-6 pr-2 text-base outline-none focus:border-yellow-500 focus:shadow-md"
+          required
         />
 
         <div class="mb-6 pt-4">
@@ -151,10 +161,22 @@
           <button
             @click="uploadFile"
             type="button"
-            class="hover:shadow-form w-full rounded-md bg-yellow-500 py-3 px-8 text-center text-base font-semibold text-white outline-none"
+            :disabled="isUploading"
+            class="hover:shadow-form w-full rounded-md bg-yellow-500 py-3 px-8 text-center text-base font-semibold text-white outline-none disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            提交
+            {{ isUploading ? '正在上传并铸造...' : '提交并铸造 NFT' }}
           </button>
+        </div>
+
+        <!-- 错误提示 -->
+        <div v-if="errorMessage" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex">
+            <div class="text-red-500 text-xl mr-3">❌</div>
+            <div>
+              <h3 class="text-sm font-medium text-red-800">提交失败</h3>
+              <p class="text-sm text-red-700 mt-1">{{ errorMessage }}</p>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -162,7 +184,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
   Listbox,
   ListboxButton,
@@ -173,7 +195,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/vue/20/solid";
 import { store } from "../main";
 import { pinFileToIPFS } from "../pinataService";
-import { callContractFunction } from "../ethersService";
+ import { callContractFunction } from "../ethersService";
 const setRef = () => {
   fileInput.value = document.getElementById("file");
 };
@@ -195,82 +217,92 @@ const uploadedFileName = ref("");
 const fileInput = ref(null);
 const walletAddress = ref("");
 const universityName = ref("");
-const certificateType = ref("");
 const certificateDate = ref("");
+const isUploading = ref(false);
+const errorMessage = ref("");
 
 const uploadFile = async () => {
   try {
-    const currentAccount = store.currentAccount;
+    isUploading.value = true;
+    errorMessage.value = "";
 
-    if (fileInput.value) {
-      const file = fileInput.value.files[0];
-      if (file) {
-        const metadata = { name: "Your metadata here" };
-        const ipfsHash = await pinFileToIPFS(file, metadata);
+    // 基本校验
+    if (!walletAddress.value || !universityName.value || !certificateDate.value) {
+      errorMessage.value = "请填写所有必填字段";
+      return;
+    }
+    if (!walletAddress.value.startsWith('0x') || walletAddress.value.length !== 42) {
+      errorMessage.value = "请输入有效的钱包地址";
+      return;
+    }
+    if (!selected.value || !selected.value.name) {
+      errorMessage.value = "请选择文档类型";
+      return;
+    }
+    if (!fileInput.value || !fileInput.value.files || !fileInput.value.files[0]) {
+      errorMessage.value = "请上传证书 PDF 文档";
+      return;
+    }
 
-        if (ipfsHash) {
-          const array = new Uint8Array(16);
-          window.crypto.getRandomValues(array);
-          const uri = Array.from(array)
-            .map((b) => b.toString(16).padStart(2, "0"))
-            .join("");
+    const file = fileInput.value.files[0];
+    const metadata = { name: "Certificate PDF" };
+    const ipfsHash = await pinFileToIPFS(file, metadata);
+    if (!ipfsHash) {
+      errorMessage.value = "上传到 IPFS 失败，请重试";
+      return;
+    }
 
-          console.log(walletAddress.value);
-          const actualWalletAddress = walletAddress.value;
-          const actualUniversityName = universityName.value;
-          const actualCertificateType = certificateType.value.name;
-          const actualCertificateDate = certificateDate.value;
+    // 生成随机 URI
+    const array = new Uint8Array(16);
+    window.crypto.getRandomValues(array);
+    const uri = Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
 
-          const { transactionResponse, txHash } = await callContractFunction(
-            "mint",
-            actualWalletAddress,
-            uri,
-            ipfsHash,
-            actualUniversityName,
-            actualCertificateType,
-            actualCertificateDate
-          );
+    const actualWalletAddress = walletAddress.value;
+    const actualUniversityName = universityName.value;
+    const actualCertificateType = selected.value.name;
+    const actualCertificateDate = certificateDate.value;
 
-          if (txHash) {
-            console.log("Transaction hash:", txHash);
-            store.setTxHash(ipfsHash, txHash);
-          }
+    const { transactionResponse, txHash: transactionHash } = await callContractFunction(
+      "mint",
+      actualWalletAddress,
+      uri,
+      ipfsHash,
+      actualUniversityName,
+      actualCertificateType,
+      actualCertificateDate
+    );
 
-          if (transactionResponse) {
-            console.log("Transaction Response:", transactionResponse);
-          }
-
-          if (txHash) {
-            console.log("Transaction hash:", txHash);
-            store.setTxHash(ipfsHash, txHash);
-          }
-          console.log("NFT minted successfully");
-        }
+    if (transactionResponse) {
+      if (transactionHash) {
+        console.log("Transaction hash:", transactionHash);
+        // 保留链上记录映射，不展示 Token ID
+        store.setTxHash(ipfsHash, transactionHash);
       }
+      alert('✅ 上传并铸造成功！');
+
+      // 清空表单
+      walletAddress.value = "";
+      universityName.value = "";
+      certificateDate.value = "";
+      uploadedFileName.value = "";
+      if (fileInput.value) fileInput.value.value = "";
     }
   } catch (error) {
-    console.error("An error occurred while uploading the file:", error);
+    console.error("上传或铸造过程中出错:", error);
+    errorMessage.value = error.message || "提交失败，请重试";
+  } finally {
+    isUploading.value = false;
   }
 };
 
 const certificatesTypes = [
-  {
-    id: 1,
-    name: "毕业论文",
-  },
-  {
-    id: 2,
-    name: "硕士论文",
-  },
-  {
-    id: 3,
-    name: "学士学位证书",
-  },
-  {
-    id: 4,
-    name: "硕士学位证书",
-  },
+  { id: 1, name: "毕业论文" },
+  { id: 2, name: "硕士论文" },
+  { id: 3, name: "学士学位证书" },
 ];
 
 const selected = ref(certificatesTypes[0]);
+ 
 </script>
