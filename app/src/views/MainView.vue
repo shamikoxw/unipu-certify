@@ -50,7 +50,7 @@
                 </DialogTitle>
                 <div class="mt-2">
                   <p class="text-sm text-gray-500">
-                    请先连接钱包以查看文档。
+                    请先连接钱包以进入My Certify。
                   </p>
                 </div>
 

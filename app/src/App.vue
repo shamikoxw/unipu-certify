@@ -5,11 +5,6 @@
     </div>
     <nav class="relative px-4 py-4 flex justify-between items-center bg-white">
       <a class="flex items-center text-3xl font-bold leading-none" href="/">
-        <img
-          src="https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/310566163_540444668083315_8039328115030065504_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=algE4CvSizcAX-4P7wc&_nc_ht=scontent-vie1-1.xx&oh=00_AfAKYPY08jsK5tMS3mvC9lzFNW8yxI59oqLHDe9It5d2gw&oe=650B5F2D"
-          class="w-24 h-24"
-          alt=""
-        />
         <h1 class="text-center text-gray-500">MY CERTIFY</h1>
       </a>
 

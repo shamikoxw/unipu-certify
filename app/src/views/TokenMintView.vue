@@ -226,7 +226,13 @@ const mintTokenNFT = async () => {
       console.log("交易哈希:", transactionHash);
       
       // 自动将 Token ID 添加到授权列表
-      await updateTokenNFTJson(tokenId);
+      try {
+        await updateTokenNFTJson(tokenId);
+        alert(`🎉 Token 认证颁发成功！\n\nToken ID: ${tokenId}\n\n✅ 已自动添加到授权列表，用户现在可以访问校友门户。`);
+      } catch (updateError) {
+        console.error("添加到授权列表失败:", updateError);
+        alert(`🎉 Token 认证 NFT 铸造成功！\n\nToken ID: ${tokenId}\n\n⚠️ 但添加到授权列表失败: ${updateError.message}\n\n请手动将 Token ID ${tokenId} 添加到授权列表。`);
+      }
 
       // 清空表单
       walletAddress.value = "";
@@ -242,7 +248,7 @@ const mintTokenNFT = async () => {
   }
 };
 
-// 自动更新 TokenNFT.json 文件
+// 将 Token 添加到后端授权列表
 const updateTokenNFTJson = async (tokenId) => {
   try {
     // 获取刚铸造的 NFT 的完整特征
@@ -256,93 +262,34 @@ const updateTokenNFTJson = async (tokenId) => {
       ipfsHash: certificate.ipfsHash,
       uri: certificate.uri,
       certificateDate: certificate.certificateDate,
-      addedAt: new Date().toISOString()
+      walletAddress: walletAddress.value // 添加钱包地址
     };
     
     console.log('NFT 特征:', nftFeatures);
     
-    // 首先尝试使用后端 API
-    try {
-      const response = await fetch('http://localhost:3001/api/token-nft/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tokenFeatures: nftFeatures
-        })
-      });
+    // 调用后端 API 添加 Token
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const response = await fetch(`${apiUrl}/api/token-nft/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tokenFeatures: nftFeatures
+      })
+    });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Token NFT 特征更新成功 (API):', result.message);
-        alert(`🎉 Token 认证颁发成功！\n\nToken ID: ${tokenId}\n\n✅ 已通过API自动添加到授权列表，用户现在可以访问校友门户。`);
-        return true;
-      }
-    } catch (apiError) {
-      console.log('后端 API 不可用，使用本地存储方案');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: '未知错误' }));
+      throw new Error(errorData.message || errorData.error || '添加Token失败');
     }
 
-    // 如果 API 不可用，使用本地存储 + 下载文件方案
-    try {
-      // 读取当前的 TokenNFT.json
-      const response = await fetch('/TokenNFT.json');
-      const currentData = await response.json();
-      
-      // 添加新的 NFT 特征
-      const updatedData = {
-        ...currentData,
-        authorizedTokenFeatures: [...(currentData.authorizedTokenFeatures || []), nftFeatures],
-        lastUpdated: new Date().toISOString()
-      };
-      
-      // 下载更新后的 JSON 文件
-      const blob = new Blob([JSON.stringify(updatedData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'TokenNFT.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      console.log('NFT 特征已添加到授权列表:', nftFeatures);
-      console.log('更新后的 authorizedTokenFeatures:', updatedData.authorizedTokenFeatures);
-      
-      alert(`🎉 Token 认证颁发成功！\n\nToken ID: ${tokenId}\n\n✅ 已自动添加到授权列表\n\n📁 已下载更新后的 TokenNFT.json 文件，请替换项目中的同名文件。`);
-      
-      return true;
-    } catch (fetchError) {
-      console.error('读取 TokenNFT.json 文件失败:', fetchError);
-      
-      // 创建新的 JSON 文件
-      const newData = {
-        description: "有权限访问校友门户的 Token NFT 特征列表",
-        authorizedTokenFeatures: [nftFeatures],
-        lastUpdated: new Date().toISOString(),
-        version: "1.0.0"
-      };
-      
-      // 下载新的 JSON 文件
-      const blob = new Blob([JSON.stringify(newData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'TokenNFT.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      alert(`🎉 Token 认证颁发成功！\n\nToken ID: ${tokenId}\n\n📁 已下载新的 TokenNFT.json 文件，请替换项目中的同名文件。`);
-      
-      return true;
-    }
+    const result = await response.json();
+    console.log('Token NFT 特征更新成功:', result.message);
+    return true;
   } catch (error) {
-    console.error("更新 TokenNFT.json 时出错:", error);
-    alert(`🎉 Token 认证颁发成功！\n\nToken ID: ${tokenId}\n\n⚠️ 请手动将 Token ID ${tokenId} 的 NFT 特征添加到 TokenNFT.json 文件中。`);
-    return false;
+    console.error("添加到授权列表时出错:", error);
+    throw error; // 抛出错误，让调用者处理
   }
 };
 </script>

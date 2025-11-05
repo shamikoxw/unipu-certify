@@ -149,7 +149,14 @@ const checkAlumniAccess = async () => {
 
 const loadAuthorizedTokenFeatures = async () => {
   try {
-    const response = await fetch('/TokenNFT.json')
+    // 从后端API获取授权Token列表
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+    const response = await fetch(`${apiUrl}/api/token-nft`)
+    
+    if (!response.ok) {
+      throw new Error(`HTTP错误! status: ${response.status}`)
+    }
+    
     const data = await response.json()
     authorizedTokenFeatures.value = data.authorizedTokenFeatures || []
     console.log('加载的授权特征列表:', authorizedTokenFeatures.value)

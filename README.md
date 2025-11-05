@@ -4,6 +4,12 @@
 
 MY CERTIFY (a fork of UNIPU Certify) 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为非同质化代币 (NFT)。该项目基于以太坊 Sepolia 测试网络构建，使用 IPFS 进行去中心化存储，允许用户直接在区块链上查看和验证其学术证书。
 
+- 前端：Vue 3 + Vite
+
+- 后端：Node.js + Express
+
+- 数据库：MySQL
+
 ## 项目结构概览
 
 - **根目录** `/`
@@ -83,6 +89,8 @@ MY CERTIFY (a fork of UNIPU Certify) 是一款 Web3 应用，支持教育机构�
 
 - 领取成功后，MetaMask 里应能看到少量 Sepolia ETH 余额（可能需要等待1-2分钟）
 
+
+
 ### step2 准备IPFS
 
 > InterPlanetary File System, IPFS是一种用于文件存储、查找和访问的分布式网络框架，其设计目标是创建一个可靠、高效、去中心化的数据分发系统。
@@ -108,6 +116,8 @@ VITE_PINATA_API_KEY=fillme
 VITE_PINATA_API_SECRET=fillme
 VITE_PINATA_JWT=fillme
 ```
+
+
 
 ### step3 配置合约
 
@@ -164,13 +174,60 @@ const contractAddress = "0x9A4169AEE84d196Fd85765A710dA1437EBEbfbC4";
 
 
 
-### step4 前端运行和使用
+### step4 配置和运行后端
+
+#### [1] 安装后端依赖
 
 ```bash
+cd app/server
+npm install
+```
+
+#### [2] 配置数据库
+
+1. 使用 app/server/sql/init.sql 创建 MySQL 数据库
+2. 编辑 `.env` 文件，配置数据库连接的参数：
+
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+```
+
+#### [3] 启动后端服务器
+
+开发模式（自动重启）：
+
+```bash
+cd app/server
+npm run dev
+```
+
+后端服务器将在 `http://localhost:3001` 运行
+
+#### [4] 配置前端环境变量
+
+确保 `app` 目录 `.env` 文件有：
+
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+> 更多后端说明请查看 `README_BACKEND.md`
+
+
+
+### step5 运行前端和使用
+
+```bash
+cd app
 npm run dev
 ```
 
 进入 http://localhost:5173 ，连接钱包
+
+> **注意**：确保后端服务器正在运行（端口3001），否则校友门户功能将无法正常工作
 
 如左侧显示 `欢迎你，管理员！` ，则说明合约配置正确，当前身份为管理员，可以上传文件
 
