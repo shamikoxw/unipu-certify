@@ -1,8 +1,8 @@
-# MY Certify: Mint Your Academic Certificates as NFTs 🎓🔗
+# My Certify: Mint Your Academic Certificates as NFTs 🎓🔗
 
 ## 项目介绍
 
-MY CERTIFY (a fork of UNIPU Certify) 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为非同质化代币 (NFT)。该项目基于以太坊 Sepolia 测试网络构建，使用 IPFS 进行去中心化存储，允许用户直接在区块链上查看和验证其学术证书。
+My Certify 是一款 Web3 应用，支持教育机构将 PDF 证书铸造为非同质化代币 (NFT)。该项目基于以太坊 Sepolia 测试网络构建，使用 IPFS 进行去中心化存储，允许用户直接在区块链上查看和验证其学术证书。
 
 - 前端：Vue 3 + Vite
 
