@@ -94,9 +94,16 @@
       </a>
     </div>
 
-    <p v-if="store.isAdmin" class="mb-12">欢迎你，<b>管理员</b>！</p>
+    <p v-if="store.isAdmin" class="mb-12"><div style="text-align: center;">欢迎你，<b>管理员</b>！</div></p>
 
     <div class="my-6">
+      <!-- 加载状态 -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        <p class="mt-4 text-gray-600 text-sm">加载中……</p>
+      </div>
+
+      <template v-else>
       <!-- 搜索与分页设置（同一行，左上角） -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-3">
@@ -145,6 +152,7 @@
           @click="currentPage = Math.min(totalPages, currentPage + 1)"
         >下一页</button>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -155,6 +163,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import {
   initializeEthers,
   fetchAllMintedNFTs,
+  fetchMintedNFTsForUser,
   connectWallet,
   getContract,
 } from "../ethersService";
@@ -169,6 +178,7 @@ import {
 } from "@headlessui/vue";
 
 const isOpen = ref(true);
+const isLoading = ref(true);
 
 function closeModal() {
   isOpen.value = false;
@@ -183,8 +193,26 @@ onMounted(async () => {
   store.myDocumentsPage = false;
   console.log("store.uploadPage", store.uploadPage);
 
-  if (store.currentAccount) {
-    store.certificates = await fetchAllMintedNFTs();
+  // 默认不展示任何NFT，直到确认钱包与权限
+  if (!store.currentAccount) {
+    store.certificates = [];
+    store.isAdmin = false;
+    isLoading.value = false;
+    return;
+  }
+
+  try {
+    const contractInstance = getContract();
+    const adminAddress = await contractInstance.getAdmin();
+    store.isAdmin = store.currentAccount.toLowerCase() === adminAddress.toLowerCase();
+    store.certificates = store.isAdmin
+      ? await fetchAllMintedNFTs()
+      : await fetchMintedNFTsForUser(store.currentAccount);
+  } catch (e) {
+    console.error("初始化证书列表失败:", e);
+    store.certificates = [];
+  } finally {
+    isLoading.value = false;
   }
 });
 
@@ -200,7 +228,13 @@ const handleConnectWallet = async () => {
     const adminAddress = await contractInstance.getAdmin();
 
     closeModal();
-    store.certificates = await fetchAllMintedNFTs();
+  // 根据是否管理员决定拉取数据范围
+  isLoading.value = true;
+  store.isAdmin = account.toLowerCase() === adminAddress.toLowerCase();
+  store.certificates = store.isAdmin
+    ? await fetchAllMintedNFTs()
+    : await fetchMintedNFTsForUser(account);
+  isLoading.value = false;
 
     if (account.toLowerCase() === adminAddress.toLowerCase()) {
       store.isAdmin = true;

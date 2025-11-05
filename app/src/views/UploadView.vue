@@ -4,7 +4,7 @@
       <form @submit.prevent="uploadFile" class="py-6 px-9" method="POST">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-800 mb-2">上传证书并铸造 NFT</h2>
-          <p class="text-gray-600">上传 PDF 文档，选择文档类型并铸造链上学术证书 NFT</p>
+          <p class="text-gray-600">上传您的文档，选择文档类型并铸造链上学术证书 NFT</p>
         </div>
 
         <div class="mb-5">
@@ -157,7 +157,20 @@
           </div>
         </div>
 
-        <div>
+
+        <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex">
+            <div class="text-blue-500 text-xl mr-3">ℹ️</div>
+            <div>
+              <h3 class="text-sm font-medium text-blue-800">提示</h3>
+              <p class="text-sm text-blue-700 mt-1">
+                上传成功后需要约 3 分钟进行链上处理，请耐心等待。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3">
           <button
             @click="uploadFile"
             type="button"
@@ -305,6 +318,7 @@ const certificatesTypes = [
   { id: 1, name: "毕业论文" },
   { id: 2, name: "硕士论文" },
   { id: 3, name: "学士学位证书" },
+  { id: 4, name: "硕士学位证书" },
 ];
 
 const selected = ref(certificatesTypes[0]);
