@@ -8,20 +8,9 @@
         <h1 class="text-center text-gray-500">MY CERTIFY</h1>
       </a>
 
-      <div class="lg:hidden">
-        <button class="navbar-burger flex items-center text-yellow-600 p-3">
-          <svg
-            class="block h-4 w-4 fill-current"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>Mobile menu</title>
-            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-          </svg>
-        </button>
-      </div>
+
       <ul
-        class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:items-center lg:w-auto lg:space-x-6"
+        class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:items-center lg:w-auto lg:space-x-6 whitespace-nowrap"
       >
         <li @click="selectMenuItem('全部')">
           <a
@@ -32,7 +21,7 @@
             "
             href="#"
           >
-            全部
+            <span class="whitespace-nowrap">全部</span>
           </a>
         </li>
         <li class="text-gray-300">
@@ -47,7 +36,7 @@
             "
             href="#"
           >
-            毕业论文
+            <span class="whitespace-nowrap">毕业论文</span>
           </a>
         </li>
         <li class="text-gray-300">
@@ -62,7 +51,7 @@
             "
             href="#"
           >
-            硕士论文
+            <span class="whitespace-nowrap">硕士论文</span>
           </a>
         </li>
         <li class="text-gray-300">
@@ -77,7 +66,7 @@
             "
             href="#"
           >
-            学士学位证书
+            <span class="whitespace-nowrap">学士学位证书</span>
           </a>
         </li>
         <li class="text-gray-300">
@@ -101,7 +90,7 @@
         <li>
           <router-link
             to="/alumni"
-            class="text-gray-400 hover:text-gray-500 transition duration-200"
+            class="text-gray-400 hover:text-gray-500 transition duration-200 whitespace-nowrap"
           >
             校友门户
           </router-link>
@@ -115,7 +104,7 @@
       >
     </nav>
     <div v-if="store.isAdmin" class="hidden lg:flex justify-center space-x-2">
-      <router-link :to="store.tokenMintPage ? '/' : '/token-mint'">
+      <router-link v-if="!store.uploadPage" :to="store.tokenMintPage ? '/' : '/token-mint'">
         <a
           class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"
@@ -123,7 +112,7 @@
           {{ store.tokenMintPage ? "返回" : "Token证书颁发" }}
         </a>
       </router-link>
-      <router-link :to="store.uploadPage ? '/' : '/upload'">
+      <router-link v-if="!store.tokenMintPage" :to="store.uploadPage ? '/' : '/upload'">
         <a
           class="py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-sm text-white font-bold rounded-xl transition duration-200"
           href="#"

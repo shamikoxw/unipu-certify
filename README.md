@@ -12,26 +12,35 @@ MY CERTIFY (a fork of UNIPU Certify) 是一款 Web3 应用，支持教育机构�
 
 ## 项目结构概览
 
-- **根目录** `/`
-    - `Smart Contract/`：Solidity 智能合约与编译产物
-        - `AcademicCertificate.sol`：证书 NFT 合约
-        - `artifacts/`：合约 ABI/metadata
-    - `app/`：前端应用（Vue 3 + Vite + TailwindCSS）
-        - `package.json`：启动/构建脚本与依赖
-        - `vite.config.js`：Vite 配置
-        - `src/`：核心前端代码
-            - `main.js`：应用入口，Pinia、路由初始化
-            - `App.vue`：全局导航与路由出口
-            - `router/index.js`：路由（`/`、`/upload`、`/my-documents`）
-            - `store.js`：Pinia 状态（账号、是否 Admin、证书列表等）
-            - `ethersService.js`：与链上交互（ethers v5）
-            - `pinataService.js`：上传文件至 Pinata（IPFS）
-            - `abi.js`：当前合约 ABI（前端用）
-            - `views/`：页面
-                - `MainView.vue`：连接钱包、显示所有证书、Etherscan 链接
-                - `UploadView.vue`：管理员铸造证书 NFT（上传 PDF → Pinata → 合约 mint）
-                - `MyDocuments.vue`：当前用户的证书
-            - `components/`：UI 组件（卡片、搜索等）
+- **`/`**
+  - `README.md`/`README_BACKEND.md`: 项目与后端说明
+  - `app/`: 前端 + 后端项目
+
+- **`/app/`**
+  - `index.html`/`vite.config.js`/`tailwind.config.js`/`postcss.config.js`: 前端构建与样式配置
+  - `package.json`/`package-lock.json`: 前端依赖与脚本
+  - `public/`: 静态资源与站点图标
+  - `src/` 前端源码（Vue 3 + Vite）
+    - `main.js`: 应用入口，Pinia 等初始化
+    - `App.vue`: 根组件
+    - `router/`: `index.js` 路由配置
+    - `store.js`: Pinia 全局状态
+    - `components/`: 基础组件（如 `Card.vue`、`Search.vue`）
+    - `views/`: 页面视图
+      - `UploadView.vue`: 上传 PDF 到 IPFS 并铸造 NFT
+      - `TokenMintView.vue`: 无文件的 Token 认证铸造
+      - 其他：`MainView.vue`、`MyDocuments.vue`、`AlumniView.vue`
+    - `ethersService.js`: 以太坊交互，初始化合约、交易调用、查询
+    - `pinataService.js`: 调用 Pinata API 上传文件至 IPFS
+    - `abi.js`: 合约 ABI
+    - `style.css`/`assets/`: 样式与资源
+  - `server/` 后端（Node.js + Express + Sequelize + MySQL）
+    - `server.js`: 服务入口、CORS/JSON 中间件、健康检查、路由挂载
+    - `routes/`: `tokenNFT.js` Token 授权相关 REST API（查询/新增）
+    - `models/`: `AuthorizedToken.js` 授权 Token 表模型
+    - `config/`: `database.js` 数据库连接配置
+    - `sql/`: `init.sql` 初始化 SQL
+    - `package.json`/`package-lock.json`: 后端依赖与脚本
 
 ## 项目食用指南
 

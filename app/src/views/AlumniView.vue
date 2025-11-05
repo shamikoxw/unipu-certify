@@ -197,6 +197,11 @@ const checkNFTMatch = (userNFT, authorizedFeature) => {
 }
 
 onMounted(() => {
+  // 进入校友门户时重置顶栏相关状态
+  store.uploadPage = false
+  store.tokenMintPage = false
+  store.myDocumentsPage = false
+  store.setSelectedMenuItem && store.setSelectedMenuItem('全部')
   checkAlumniAccess()
 })
 </script>

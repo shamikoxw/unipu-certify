@@ -184,7 +184,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import {
   Listbox,
   ListboxButton,
@@ -203,6 +203,10 @@ const setRef = () => {
 onMounted(() => {
   console.log("mounted");
   store.uploadPage = true;
+});
+
+onUnmounted(() => {
+  store.uploadPage = false;
 });
 
 const today = computed(() => {

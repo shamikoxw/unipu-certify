@@ -1,72 +1,39 @@
 <template>
-  <div v-if="nft && nft.uri" class="max-w-sm w-full lg:max-w-full lg:flex">
-    <div
-      class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-      title="NFT Image"
-    ></div>
+  <div v-if="nft && nft.uri" class="w-full">
+    <div class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col space-y-3">
+      <div class="text-gray-900 text-lg">
+        <b>颁发机构：</b> {{ nft.universityName }}
+      </div>
+      <div class="text-gray-700">{{ nft.certificateType }}</div>
+      <div class="text-gray-700">{{ nft.certificateDate }}</div>
 
-    <div
-      class="bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal"
-    >
-      <div class="mb-8">
-        <div class="w-full h-96 bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center">
-          <div class="text-center">
-            <div class="text-gray-500 text-lg mb-2">📄</div>
-            <p class="text-gray-600">证书预览</p>
-            <a 
-              :href="'https://ipfs.io/ipfs/' + nft.ipfsHash" 
-              target="_blank"
-              class="text-blue-500 hover:text-blue-700 underline mt-2 inline-block"
-            >
-              点击查看完整证书
-            </a>
-          </div>
+      <div class="text-sm">
+        <div class="flex items-center mb-1">
+          <span>👤</span>
+          <p class="text-gray-900 leading-none ml-2">所有者：{{ nft.ownerAddress }}</p>
         </div>
-
-        <div class="text-gray-900 text-xl mb-2">
-          <b>颁发机构：</b> {{ nft.universityName }}
+        <div class="flex items-center mb-1">
+          <span>🔗</span>
+          <p class="text-gray-600 ml-2 break-all">URI: {{ nft.uri }}</p>
         </div>
-        <p class="text-gray-700 text-base">
-          {{ nft.certificateType }}
-        </p>
-        <p class="text-gray-700 text-base">
-          {{ nft.certificateDate }}
-        </p>
+        <div class="flex items-center truncate-container">
+          <span>🎓</span>
+          <a
+            class="text-blue-600 ml-2 underline truncate"
+            target="_blank"
+            :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
+            :title="'https://ipfs.io/ipfs/' + nft.ipfsHash"
+          >
+            查看证书文件
+          </a>
+        </div>
       </div>
 
-      <div class="flex items-center">
-        <div class="text-sm flex-grow">
-          <div class="flex items-center">
-            <span class="icon-class-or-emoji">👤</span>
-            <p class="text-gray-900 leading-none ml-2">
-              所有者：{{ nft.ownerAddress }}
-            </p>
-          </div>
-          <div class="flex items-center">
-            <span class="icon-class-or-emoji">🔗</span>
-            <p class="text-gray-600 ml-2">URI: {{ nft.uri }}</p>
-          </div>
-          <div class="flex items-center truncate-container">
-            <span class="icon-class-or-emoji">🎓</span>
-            <a
-              class="text-gray-600 ml-2 truncate"
-              target="_blank"
-              :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
-              title="{{ 'https://ipfs.io/ipfs/' + nft.ipfsHash }}"
-            >
-              NFT：
-              <a
-                class="underline"
-                :href="'https://ipfs.io/ipfs/' + nft.ipfsHash"
-                >link</a
-              >
-            </a>
-          </div>
-        </div>
+      <div class="pt-2">
+        <button @click="verifyCertificate(nft.id)" class="py-2 px-4 bg-green-500 hover:bg-green-600 text-sm text-white font-bold rounded-md transition duration-200">
+          验证
+        </button>
       </div>
-      <button @click="verifyCertificate(nft.id)" class="btn btn-verify">
-        验证
-      </button>
     </div>
   </div>
 </template>
